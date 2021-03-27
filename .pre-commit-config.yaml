@@ -31,15 +31,14 @@ repos:
           - "--separate-relative"
           - "--separate-from-import"
 
-  - repo: "https://github.com/ambv/black"
-    rev: "stable"
-    hooks:
-      - id: "black"
-        language_version: "python3.8"
-        args: ["--line-length", "109", "--target-version", "py38"]
-
   - repo: "local"
     hooks:
+      - id: "black"
+        name: "black"
+        entry: "black"
+        language: "system"
+        types: ["python"]
+
       - id: "prospector"
         name: "prospector"
         entry: "prospector --absolute-paths --no-external-config --profile-path .prospector.yaml -w profile-validator -W pep257"
