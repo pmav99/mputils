@@ -11,21 +11,13 @@ from .utils import get_threadname
 from .utils import raise_zero_division_error
 
 
-CONCURRENCY_FUNCS = pytest.mark.parametrize("concurrency_func", [mputils.multithread, mputils.multiprocess],)
-
-# Some help functions to test multithreading
-
-
-# The actual tests
-
-
 def test_multithread_raises_value_error_if_n_workers_higher_than_available_threads() -> None:
     with pytest.raises(ValueError) as exc:
         mputils.multi.multithread(func=lambda x: x, func_kwargs=[dict(x=1)] * 2, n_workers=1024)
     assert f"The maximum available threads are {mputils.MAX_NUM_CORES}, not: 1024" == str(exc.value)
 
 
-@CONCURRENCY_FUNCS
+@pytest.mark.parametrize("concurrency_func", [mputils.multithread, mputils.multiprocess])
 def test_multi_functions_return_FutureResults(  # noqa  # pylint: disable=invalid-name
     concurrency_func: Callable[..., Any],
 ) -> None:
@@ -36,7 +28,7 @@ def test_multi_functions_return_FutureResults(  # noqa  # pylint: disable=invali
         assert result.exception is None
 
 
-@CONCURRENCY_FUNCS
+@pytest.mark.parametrize("concurrency_func", [mputils.multithread, mputils.multiprocess])
 def test_multi_functions_return_FutureResults_even_when_exceptions_are_raised(  # noqa  # pylint: disable=invalid-name
     concurrency_func: Callable[..., Any],
 ) -> None:
@@ -44,7 +36,7 @@ def test_multi_functions_return_FutureResults_even_when_exceptions_are_raised(  
     results = concurrency_func(func=raise_zero_division_error, func_kwargs=func_kwargs)
     for result in results:
         assert isinstance(result, mputils.multi.FutureResult)
-        assert isinstance(result.exception, Exception)
+        assert isinstance(result.exception, ZeroDivisionError)
 
 
 @pytest.mark.parametrize("n_workers", [1, 2, 4])
