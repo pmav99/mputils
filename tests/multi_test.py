@@ -1,3 +1,5 @@
+import time
+
 from typing import Any
 from typing import Callable
 
@@ -9,6 +11,7 @@ from .utils import get_inverse_number
 from .utils import get_processname
 from .utils import get_threadname
 from .utils import raise_zero_division_error
+from .utils import sleep
 
 
 def test_multithread_raises_value_error_if_n_workers_higher_than_available_threads() -> None:
@@ -55,3 +58,17 @@ def test_multiprocess_pool_size(n_workers: int) -> None:
     results = mputils.multi.multiprocess(func=get_processname, func_kwargs=func_kwargs, n_workers=n_workers)
     thread_names = {result.result for result in results}
     assert len(thread_names) == n_workers
+
+
+@pytest.mark.parametrize(
+    "concurrency_func",
+    [mputils.multithread, mputils.multiprocess],
+)
+def test_parallel_calls_are_faster_than_serial_calls(concurrency_func: Callable[..., Any]) -> None:
+    wait_time = 0.1
+    func_kwargs = [dict(seconds=wait_time)] * 2
+    start = time.time()
+    concurrency_func(func=sleep, func_kwargs=func_kwargs, n_workers=2)
+    duration = time.time() - start
+    assert duration > wait_time
+    assert duration < 2 * wait_time

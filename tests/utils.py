@@ -23,3 +23,7 @@ def raise_zero_division_error(**kwargs: Any) -> None:  # noqa  # pylint: disable
 
 def get_inverse_number(number: float) -> float:
     return 1 / number
+
+
+def sleep(seconds: float) -> None:
+    time.sleep(seconds)
