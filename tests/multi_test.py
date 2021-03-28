@@ -42,6 +42,18 @@ def test_multi_functions_return_FutureResults_even_when_exceptions_are_raised(  
         assert isinstance(result.exception, ZeroDivisionError)
 
 
+@pytest.mark.parametrize(
+    "number",
+    [pytest.param(0, id="An exception is raised"), pytest.param(1, id="Function returns normally")],
+)
+@pytest.mark.parametrize("concurrency_func", [mputils.multithread, mputils.multiprocess])
+def test_omit_kwargs_in_results(concurrency_func: Callable[..., Any], number: float) -> None:
+    func_kwargs = [dict(number=number)]
+    results = concurrency_func(func=get_inverse_number, func_kwargs=func_kwargs, include_kwargs=False)
+    for result in results:
+        assert result.kwargs is None
+
+
 @pytest.mark.parametrize("n_workers", [1, 2, 4])
 def test_multithread_pool_size(n_workers: int) -> None:
     # Test that the number of the used threads is equal to the specified number of workers
