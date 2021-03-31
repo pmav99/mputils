@@ -4,19 +4,19 @@ name: "tests"
 
 on:
   - "push"
+  - "pull_request"
 
 jobs:
   ci:
     name: "CI setup"
-
     strategy:
       fail-fast: false
       matrix:
         python-version:
-          - 3.6
-          - 3.7
+          #- 3.6
+          #- 3.7
           - 3.8
-          - 3.9
+          #- 3.9
         os:
           - "ubuntu-18.04"
           #- "macos-latest"
@@ -40,13 +40,8 @@ jobs:
           path: "~/.cache/pypoetry"
           key: "${{ matrix.os }}-poetry-${{ matrix.python-version }}-${{ env.CACHE_NUMBER }}-${{ hashFiles('poetry.lock') }}"
 
-      - name: "Setup poetry"
-        run: |
-          pip install --user pipx
-          pipx install poetry
-
       - name: "Install python dependencies"
-        run: "poetry install"
+        run: "pip install -r requirements.txt -vvv"
 
       - name: "Run tests"
         run: "pytest"
