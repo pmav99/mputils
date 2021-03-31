@@ -1,29 +1,16 @@
 from __future__ import annotations
 
 import pathlib
-import shutil
 
 import typer
 
+from .actions import copy_path
+from .actions import move_path
 from .multi import MAX_NUM_CORES
 from .multi import multiprocess
 
 
 app = typer.Typer(add_completion=False, invoke_without_command=False, no_args_is_help=True)
-
-
-def copy_(source: pathlib.Path, destination: pathlib.Path, follow_symlinks: bool = True) -> None:
-    destination.parent.mkdir(exist_ok=True, parents=True)
-    if source.is_dir():
-        destination.mkdir(exist_ok=True)
-    else:
-        shutil.copy2(src=source, dst=destination, follow_symlinks=follow_symlinks)
-
-
-def move_(source: pathlib.Path, destination: pathlib.Path) -> None:
-    destination.parent.mkdir(exist_ok=True, parents=True)
-    # shutil.move does not accept pathlib.Path objects until python 3.9!
-    shutil.move(src=source.as_posix(), dst=destination.as_posix())
 
 
 @app.command(no_args_is_help=True)
@@ -52,7 +39,7 @@ def move(
     else:
         func_kwargs = [dict(source=src, destination=dst) for src, dst in pairs.items()]
         results = multiprocess(
-            func=move_, func_kwargs=func_kwargs, n_workers=workers, print_exceptions=False
+            func=move_path, func_kwargs=func_kwargs, n_workers=workers, print_exceptions=False
         )
         exceptions = {r.exception for r in results if r.exception}
         if len(exceptions) > 1:
@@ -88,7 +75,7 @@ def copy(
     else:
         func_kwargs = [dict(source=src, destination=dst) for src, dst in pairs.items()]
         results = multiprocess(
-            func=copy_, func_kwargs=func_kwargs, n_workers=workers, print_exceptions=False
+            func=copy_path, func_kwargs=func_kwargs, n_workers=workers, print_exceptions=False
         )
         exceptions = {r.exception for r in results if r.exception}
         if len(exceptions) > 1:
