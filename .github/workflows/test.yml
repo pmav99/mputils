@@ -21,8 +21,7 @@ jobs:
           - "ubuntu-18.04"
           #- "macos-latest"
           #- "windows-latest"
-
-    runs-on: "${{ matrix.os }}"
+    runs-on: "${{ matrix.os }}"#
 
     steps:
       - name: "Checkout code"
@@ -30,18 +29,15 @@ jobs:
 
       - name: "Setup python"
         uses: "actions/setup-python@v2"
-
-      - name: "Cache poetry"
-        uses: "actions/cache@v1"
-        env:
-          # Increase this value to reset cache if env.yml has not changed
-          CACHE_NUMBER: 0
         with:
-          path: "~/.cache/pypoetry"
-          key: "${{ matrix.os }}-poetry-${{ matrix.python-version }}-${{ env.CACHE_NUMBER }}-${{ hashFiles('poetry.lock') }}"
+          python-version: "${{ matrix.python-version }}"
+          architecture: "x64"
+
+      - name: "Check python version"
+        run: "python --version"
 
       - name: "Install python dependencies"
-        run: "pip install -r requirements.txt -vvv"
+        run: "python -m pip install -r requirements.txt -v"
 
       - name: "Run tests"
-        run: "pytest"
+        run: "python -m pytest"
