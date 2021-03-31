@@ -54,7 +54,7 @@ def test_omit_kwargs_in_results(concurrency_func: Callable[..., Any], number: fl
         assert result.kwargs is None
 
 
-@pytest.mark.parametrize("n_workers", [1, 2, 4])
+@pytest.mark.parametrize("n_workers", [1, 2])
 def test_multithread_pool_size(n_workers: int) -> None:
     # Test that the number of the used threads is equal to the specified number of workers
     func_kwargs = [{"arg": i} for i in range(4 * n_workers)]
@@ -63,7 +63,7 @@ def test_multithread_pool_size(n_workers: int) -> None:
     assert len(thread_names) == n_workers
 
 
-@pytest.mark.parametrize("n_workers", [1, 2, 4])
+@pytest.mark.parametrize("n_workers", [1, 2])
 def test_multiprocess_pool_size(n_workers: int) -> None:
     # Test that the number of the used threads is equal to the specified number of workers
     func_kwargs = [{"arg": i} for i in range(4 * n_workers)]
