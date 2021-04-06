@@ -1,3 +1,6 @@
+[![tests](https://github.com/pmav99/mputils/actions/workflows/test.yml/badge.svg)](https://github.com/pmav99/mputils/actions/workflows/test.yml)
+[![Code Quality](https://github.com/pmav99/mputils/actions/workflows/code-quality.yml/badge.svg)](https://github.com/pmav99/mputils/actions/workflows/code-quality.yml)
+
 # mputils
 
 Move and copy files efficiently using multiprocessing
